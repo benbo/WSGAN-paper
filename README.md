@@ -1,4 +1,4 @@
-# WSGAN
+# Weakly Supervised GAN (WSGAN)
 This repository contains code to train a weakly supervised generative adversarial network (WSGAN) as presented in: 
 
 **Generative Modeling Helps Weak Supervision (and Vice Versa)**<br>
