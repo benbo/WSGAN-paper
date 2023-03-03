@@ -121,8 +121,6 @@ def main(args: Namespace) -> None:
             if isinstance(LF_accuracies, list):
                 LF_accuracies = np.array(LF_accuracies)
             LF_accuracies = LF_accuracies[lfidxs]
-            if ValLambdas is not None:
-                ValLambdas = ValLambdas[:, lfidxs]
         if tmp_num_lfs < max_lfs:
             warnings.warn(
                 "WARNING: max number of LFs chosen greater than available number of LFs"
@@ -202,7 +200,7 @@ def main(args: Namespace) -> None:
             epoch_generate=args.max_epochs - 1,
             fake_data_store=fake_data_store,
         )
-    elif args.whichmodule == "GANLabelModel":
+    elif args.whichmodule == "GANLabelModel" or args.whichmodule == "WSGAN":
         # The WSGAN model using a simple DCGAN architecture
         model = GANLabelModel(
             num_LFs,
@@ -242,21 +240,26 @@ def main(args: Namespace) -> None:
         )
     else:
         foldername = "wsganlogs/%s/" % datasetsavename
+
+    logdir = os.path.join(storedir, foldername)
+    os.makedirs(logdir, exist_ok=True)
     tb_logger = pl_loggers.TensorBoardLogger(
-        os.path.join(storedir, foldername), name=args.whichmodule
+        logdir, name=args.whichmodule
     )
     # set up trainer
     trainer = Trainer(
         gradient_clip_val=0.5,
-        gpus=args.gpus,
+        accelerator='gpu', 
+        devices=args.gpus, # gpus IDs to use. NOTE: code was only tested on a single GPU.
         logger=tb_logger,
-        accelerator="ddp",
         max_epochs=args.max_epochs,
     )
+
     # ------------------------
     # START GAN Model training
     # ------------------------
     trainer.fit(model, dm)
+    
 
 if __name__ == "__main__":
     # python lightning/main.py --data_path /home/scratch/benediktb/data
