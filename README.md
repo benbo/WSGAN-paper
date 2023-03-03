@@ -8,6 +8,7 @@ International Conference on Learning Representations (ICLR) (2023)<br>
 
 The base GAN network used for the WSGAN model in this repository is a simple DCGAN. This allows us to explore the joint training of GANs and label models without requiring costly high-end GPU resources. If you are interested in training a more sophisticated GAN architecture  (e.g. on images of higher resolution), please check out our StyleWSGAN repository with code used in our ablations to train a StyleWSGAN network (based on StyleGAN2-ADA): https://github.com/benbo/stylewsgan 
 
+The style of weak supervision we consider in this repository is that of programmatic weak supervision (data programming), where we learn from multiple sources of imperfect, partial labels. These sources are referred to as labeling functions (LFs). 
 
 # Dependencies
 To allow you to run this code easily, we have updated it slightly from the version used in our paper, which relied on old versions of PyTorch, Pytorch Lightning, cuda etc. We recommend that you set up the environment as follows.
