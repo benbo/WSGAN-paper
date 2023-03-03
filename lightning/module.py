@@ -70,6 +70,7 @@ class LightningGAN(LightningModule):
         self.validation_z = torch.randn(num_val, latent_dim, device=self.device)
 
     def _init_networks(self):
+        
         self.generator, self.discriminator = get_networks_base(
             self.architecture, self.latent_dim, 0, self.img_shape
         )
@@ -366,7 +367,7 @@ class LightningInfoGAN(LightningGAN):
             lrscheduler,
             log_inception_score,
         )
-
+        
         if class_balance is None:
             self.class_balance = (
                 torch.ones(self.n_classes, device=self.device) / self.n_classes
@@ -392,9 +393,11 @@ class LightningInfoGAN(LightningGAN):
         discrete_z = discrete_z[:num_val]
         noise = torch.randn(num_val, self.latent_dim, device=self.device)
         discrete_z_oh = F.one_hot(discrete_z, num_classes=self.latent_code_dim)
+
         self.validation_z = torch.cat((noise, discrete_z_oh.float()), 1)
         self.val_noise = noise
         self.val_discrete_z = discrete_z
+
 
     def _init_networks(self):
         # networks
@@ -722,7 +725,6 @@ class GANLabelModel(LightningGAN):
         if n_classes is None:
             n_classes = latent_code_dim
         self.n_classes = n_classes
-
         super().__init__(
             num_LFs,
             batch_size,
@@ -786,19 +788,23 @@ class GANLabelModel(LightningGAN):
         )
 
         self.posterior_ari = ARI()
-        self.posterior_accuracy = torchmetrics.Accuracy()
+        if self.n_classes > 2:
+            task = "multiclass"
+            self.posterior_accuracy = torchmetrics.classification.MulticlassAccuracy(num_classes=self.n_classes)
+        else:
+            task = "binary"
+            self.posterior_accuracy = torchmetrics.classification.BinaryAccuracy()
         # https://torchmetrics.readthedocs.io/en/latest/references/modules.html#averageprecision
-        self.posterior_ap = torchmetrics.AveragePrecision(num_classes=self.n_classes)
-        self.posterior_ap_weighted = torchmetrics.AveragePrecision(
+        self.posterior_ap_weighted = torchmetrics.AveragePrecision(task=task,
             num_classes=self.n_classes, average="weighted"
         )
-        self.posterior_fone = torchmetrics.F1(
+        self.posterior_fone = torchmetrics.F1Score(task=task,
             num_classes=self.n_classes, average="weighted"
         )
-        self.posterior_rec = torchmetrics.Recall(
+        self.posterior_rec = torchmetrics.Recall(task=task,
             num_classes=self.n_classes, average="weighted"
         )
-        self.posterior_prec = torchmetrics.Precision(
+        self.posterior_prec = torchmetrics.Precision(task=task,
             num_classes=self.n_classes, average="weighted"
         )
 
@@ -811,11 +817,6 @@ class GANLabelModel(LightningGAN):
         self.validation_z = torch.cat((noise, discrete_z_oh.float()), 1)
         self.val_noise = noise
         self.val_discrete_z = discrete_z.to(self.device)
-        print("***********")
-        print(self.val_noise)
-        print("***********")
-        print(self.val_discrete_z)
-        print("***********")
 
     def _init_networks(self):
         # networks
@@ -985,6 +986,7 @@ class GANLabelModel(LightningGAN):
             lr=lmlr,
             betas=(b1, b2),
         )
+
         if self.lrscheduler:
             # TODO add epochs as hyper parameter
             g_schedule = get_linear_lr_schedule(glr, n_epochs=200, minlr=glr * 0.01)
@@ -1012,7 +1014,9 @@ class GANLabelModel(LightningGAN):
                 [g_scheduler, d_scheduler, i_scheduler, lf_scheduler],
             )
         else:
+
             return [opt_d, opt_g, opt_info, opt_lf], []
+        
 
     def map_code_to_label(self, code):
         with torch.no_grad():
