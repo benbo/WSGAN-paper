@@ -78,3 +78,21 @@ python lightning/main_labelmodel.py --dataset CIFAR10 --gpus 3 --batch_size 16 -
 ```
 
 NOTE: the code will seeminlgy hang for a while after the first epoch (epoch 0) . This is because FID is computed for the first time, which takes a while as the dataset and fake images are passed through an inception network. By default, FID will be computed ewvery 10 epochs. 
+
+To view the training progress, you can use tensorboard:
+```bash
+conda activate WSGAN
+tensorboard --logdir /pathtooutputdirectory/wsganlogs/
+```
+
+
+# Datasets used in the WSGAN paper
+NOTE: when using these sets of labeling functions (LFs), please double check the accuracy and coverage of each LF (i.e. compare their votes to the ground truth), to ensure that you spot any errors stemming from the LF votes being associated with the wrong samples. Because we are using publicly available datasets with out own LFs, we cannot guarantee the datasets will remain unchanged and that images will be loaded the same way on all systems.
+
+We are able to release some of the LF sets used in the WSGAN paper in a way that they can be used with publicly available datasets, without having to rehost the original image data. You can use these LF sets to train a WSGAN by loading the following files that contain the weak labels and sample indices:
+- **CIFAR10-B**: use ``data/CIFAR10/ssl_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 20``
+- **MNIST**: use ``data/MNIST/ssl_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 29``
+- **FashionMNIST**: use ``data/FashionMNIST/ssl_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 23``
+- **GTSRB**: use ``data/GTSRB/ssl_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 100``
+- **CIFAR10-A**: use ``data/CIFAR10/synthetic_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 20``
+
