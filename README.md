@@ -2,7 +2,7 @@
 This repository contains code to train a weakly supervised generative adversarial network (WSGAN) as presented in: 
 
 **Generative Modeling Helps Weak Supervision (and Vice Versa)**<br>
-B Boecking, W Neiswanger, N Roberts, S Ermon, F Sala, A Dubrawski<br>
+Benedikt Boecking, Nicholas Roberts, Willie Neiswanger, Stefano Ermon, Frederic Sala, Artur Dubrawski<br>
 International Conference on Learning Representations (ICLR) (2023)<br>
 <a class="" href="https://arxiv.org/abs/2203.12023">[arXiv]</a> <a class="" href="https://openreview.net/forum?id=3OaBBATwsvP">[OpenReview]</a>
 
