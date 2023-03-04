@@ -283,17 +283,6 @@ class InceptionScores(Metric):
                 "Argument `subset_size` should be smaller than the number of samples"
             )
 
-        kid_scores_ = []
-        for _ in range(self.subsets):
-            perm = torch.randperm(n_samples_real)
-            f_real = real_features[perm[: self.subset_size]]
-            perm2 = torch.randperm(n_samples_fake)
-            f_fake = fake_features[perm2[: self.subset_size]]
-
-            o = poly_mmd(f_real, f_fake, self.degree, self.gamma, self.coef)
-            kid_scores_.append(o)
-        kid_scores = torch.stack(kid_scores_)
-
         #####
         # FID
         #####
@@ -313,37 +302,9 @@ class InceptionScores(Metric):
         cov2 = 1.0 / (n - 1) * diff2.t().mm(diff2)
         fid = _compute_fid(mean1, cov1, mean2, cov2).to(orig_dtype)
 
-        #####
-        # IS
-        #####
-
-        # compute inception score
-        features = fake_features
-        idx = torch.randperm(features.shape[0])
-        features = features[idx]
-
-        # calculate probs and logits
-        prob = features.softmax(dim=1)
-        log_prob = features.log_softmax(dim=1)
-
-        # split into groups
-        prob = prob.chunk(self.splits, dim=0)
-        log_prob = log_prob.chunk(self.splits, dim=0)
-
-        # calculate score per split
-        mean_prob = [p.mean(dim=0, keepdim=True) for p in prob]
-        kl_ = [
-            p * (log_p - m_p.log()) for p, log_p, m_p in zip(prob, log_prob, mean_prob)
-        ]
-        kl_ = [k.sum(dim=1).mean().exp() for k in kl_]
-        kl = torch.stack(kl_)
 
         scores = {
-            "FID": fid,
-            "KID_mean": kid_scores.mean(),
-            "KID_std": kid_scores.std(unbiased=False),
-            "IS_mean": kl.mean(),
-            "IS_std": kl.std(),
-        }
+            "FID": fid
+            }
 
         return scores
