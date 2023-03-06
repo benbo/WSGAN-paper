@@ -79,7 +79,7 @@ $ python lightning/main_labelmodel.py --dataset CIFAR10 --gpus 3 --batch_size 16
 # --data_path # specifies where to find the dataset or where to download it to
 ```
 
-NOTE: the code will seeminlgy hang for a while after the first epoch (epoch 0) . This is because FID is computed for the first time, which takes a while as the dataset and fake images are passed through an inception network. By default, FID will be computed ewvery 10 epochs. 
+NOTE: the code will seeminlgy hang for a while after the first epoch (epoch 0) . This is because FID is computed for the first time, which takes a while as the dataset and fake images are passed through an inception network. By default, FID will be computed every 10 epochs. 
 
 Use tensorboard to view the training progress:
 ```bash
