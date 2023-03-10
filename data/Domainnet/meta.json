@@ -1,0 +1,74 @@
+{
+    "labeler_accuracies": [
+        0.4162270786234614,
+        0.41497111278573223,
+        0.6839989952273298,
+        0.4306706857573474
+    ],
+    "lf_meta": {
+        "0": {
+            "domain": "clipart",
+            "label_space": [
+                "garden",
+                "helicopter",
+                "bird",
+                "cat",
+                "sheep",
+                "bread",
+                "mountain",
+                "elephant",
+                "mushroom",
+                "cake"
+            ]
+        },
+        "1": {
+            "domain": "infograph",
+            "label_space": [
+                "garden",
+                "helicopter",
+                "bird",
+                "cat",
+                "sheep",
+                "bread",
+                "mountain",
+                "elephant",
+                "mushroom",
+                "cake"
+            ]
+        },
+        "2": {
+            "domain": "painting",
+            "label_space": [
+                "garden",
+                "helicopter",
+                "bird",
+                "cat",
+                "sheep",
+                "bread",
+                "mountain",
+                "elephant",
+                "mushroom",
+                "cake"
+            ]
+        },
+        "3": {
+            "domain": "sketch",
+            "label_space": [
+                "garden",
+                "helicopter",
+                "bird",
+                "cat",
+                "sheep",
+                "bread",
+                "mountain",
+                "elephant",
+                "mushroom",
+                "cake"
+            ]
+        }
+    },
+    "input_size": [
+        84,
+        84
+    ]
+}
