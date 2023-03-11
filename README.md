@@ -91,10 +91,14 @@ $ tensorboard --logdir /pathtooutputdirectory/wsganlogs/
 # Datasets used in the WSGAN paper
 NOTE: when using these sets of labeling functions (LFs), please double check the accuracy and coverage of each LF (i.e. compare their votes to the ground truth), to ensure that you spot any errors stemming from the LF votes being associated with the wrong samples. Because we are using publicly available datasets with our own LFs, we cannot guarantee that the datasets will remain unchanged or that images will be loaded the same way on all systems.
 
-We are able to release some of the LF sets used in the WSGAN paper in a way that they can be associated with publicly available datasets, without having to rehost the original image datasets. You can use these LF sets to train a WSGAN by loading the following files that contain the weak labels and sample indices:
+Some of the LF sets used in the WSGAN paper are for datasets available via `torchvision`. You can use these LF sets to train a WSGAN by loading the following files that contain the weak labels and sample indices:
 - **CIFAR10-B**: use ``data/CIFAR10/ssl_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 20``
 - **MNIST**: use ``data/MNIST/ssl_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 29``
 - **FashionMNIST**: use ``data/FashionMNIST/ssl_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 23``
 - **GTSRB**: use ``data/GTSRB/ssl_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 100``
 - **CIFAR10-A**: use ``data/CIFAR10/synthetic_lfs.pth`` for weak labels (``--lffname``) and set ``--numlfs 20``
+
+The images for the [Domainnet](http://ai.bu.edu/DomainNet/) and [Animals with Attributes 2 (AwA2)](https://cvml.ista.ac.at/AwA2/) datasets have to be downloaded manually.
+
+
 
