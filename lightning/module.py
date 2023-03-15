@@ -705,7 +705,7 @@ class GANLabelModel(LightningGAN):
         n_classes: Optional[int] = None,
         encodertype: str = "encoderX",
         freeze_features=False,
-        decaylossterm=False,
+        decaylossterm=1.0,
         epoch_generate=-1,
         num_fake=2000,
         fake_data_store=None,
@@ -790,7 +790,7 @@ class GANLabelModel(LightningGAN):
         self.posterior_ari = ARI()
         if self.n_classes > 2:
             task = "multiclass"
-            self.posterior_accuracy = torchmetrics.classification.MulticlassAccuracy(num_classes=self.n_classes)
+            self.posterior_accuracy = torchmetrics.classification.MulticlassAccuracy(num_classes=self.n_classes, average='micro')
         else:
             task = "binary"
             self.posterior_accuracy = torchmetrics.classification.BinaryAccuracy()
@@ -921,9 +921,10 @@ class GANLabelModel(LightningGAN):
         )
         parser.add_argument(
             "--decaylossterm",
-            default=False,
-            action="store_true",
-            help="Keep initial label model weights equal, slowly decay this term per epoch",
+            default=1.0,
+            type=float,
+            help="Weight for decay loss term. Keeps initial label model weights equal, slowly decays this term per epoch",
+            required=False,
         )
         parser.add_argument(
             "--num_fake",
@@ -1120,8 +1121,7 @@ class GANLabelModel(LightningGAN):
                     self.ftwo(yestimate), latent_GAN_code.detach()
                 )
                 tqdm_dict = {"lfloss": lfloss}
-                if self.decaylossterm:
-
+                if self.decaylossterm>0.0:
                     # force label model accuracy weights to stay close to 0.5 at early epochs
                     # This means we keep a label model with equal weighted accuracies at the beginning
                     # which and enables the discrete GAN variables to catch up while in its early stages
@@ -1131,14 +1131,13 @@ class GANLabelModel(LightningGAN):
                         * self.mse_loss(accs, torch.ones_like(accs) * 0.5)
                         / self.num_LFs
                     )
-                    tqdm_dict["decayloss"] = decayloss
+                    tqdm_dict["decayloss"] = self.decaylossterm*decayloss
                     acc_d = accs.detach()
                     tqdm_dict["mean_acc_param"] = acc_d.mean()
                     tqdm_dict["stddev_acc_param"] = acc_d.std()
-                    lfloss += decayloss
+                    lfloss += self.decaylossterm*decayloss
 
                 self.log_dict(tqdm_dict)
-
                 # log performance of label estimate
                 with torch.no_grad():
                     # log GAN code ARI on non-abstains

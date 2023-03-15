@@ -64,7 +64,7 @@ Then use `main_labelmodel.py` in the lightning folder, e.g.
 
 ```bash
 $ conda activate WSGAN
-$ python lightning/main_labelmodel.py --dataset CIFAR10 --gpus 3 --batch_size 16 --lffname /pathtodirectory/WSGAN-paper/data/CIFAR10/fixed_LFs.pth --max_epochs 150 --whichmodule GANLabelModel --ganenctype encoderX --storedir /outputs/ --data_path /pathtodownloaddirectory/ --decaylossterm
+$ python lightning/main_labelmodel.py --dataset CIFAR10 --gpus 3 --batch_size 16 --lffname /pathtodirectory/WSGAN-paper/data/CIFAR10/fixed_LFs.pth --max_epochs 150 --whichmodule GANLabelModel --ganenctype encoderX --storedir /outputs/ --data_path /pathtodownloaddirectory/
 ###
 # !!before running the command above, please adapt it to the correct directories on your system!!
 ###
@@ -77,7 +77,7 @@ $ python lightning/main_labelmodel.py --dataset CIFAR10 --gpus 3 --batch_size 16
 # --ganenctype # specifies which encoder to use for the label model (encoderX is recommended)
 # --storedir # specifies where to store the model checkpoints and logs
 # --data_path # specifies where to find the dataset or where to download it to
-# --decaylossterm # specifies that the decayign loss term should be used (consider adapting the penalty weight in the code)
+# --decaylossterm # specifies a weight for the decaying loss term, default is 1.0
 ```
 
 NOTE: the code will seeminlgy hang for a while after the first epoch (epoch 0) . This is because FID is computed for the first time, which takes a while as the dataset and fake images are passed through an inception network. By default, FID will be computed every 10 epochs. 
